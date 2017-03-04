@@ -41,9 +41,11 @@ namespace Holojam.Tools {
           client.ChangeRelayAddress(ip);
           break;
         case "BuildIndex":
+          string buildIndexText = GetText(node);
           int buildIndex = -1;
-          if (!int.TryParse(GetText(node), out buildIndex)) {
-            // TODO: error
+          if (!int.TryParse(buildIndexText, out buildIndex)) {
+            Debug.LogWarning("Error in Holojam configuration file: build index should be a number,"
+                             + " instead got \"" + buildIndexText + "\".");
             break;
           }
           BuildManager.BUILD_INDEX = buildIndex;
