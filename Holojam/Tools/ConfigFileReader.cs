@@ -1,9 +1,10 @@
 ﻿// ConfigFileReader.cs
 // Created by Holojam Inc. on 03.04.17
 
-using UnityEngine;
-using System.Xml;
+using System.Net;
 using System.IO;
+using System.Xml;
+using UnityEngine;
 using Holojam.Network;
 
 namespace Holojam.Tools {
@@ -38,7 +39,13 @@ namespace Holojam.Tools {
             break;
           }
           string ip = GetText(node);
-          // TODO: maybe validate the build IP
+          IPAddress dummy;
+          if (!IPAddress.TryParse(ip, out dummy)) {
+            // The IP address is invalid
+            Debug.LogWarning("Error in Holojam configuration file: relay IP should be a valid IP"
+                             + " address, instead got \"" + ip + "\".");
+            break;
+          }
           client.ChangeRelayAddress(ip);
           break;
         case "BuildIndex":
