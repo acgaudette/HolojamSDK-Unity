@@ -22,11 +22,7 @@ namespace Holojam.Network {
   /// </summary>
   public class Client : Utility.Global<Client> {
 
-    /// <summary>
-    /// Address of the central Holojam relay node.
-    /// </summary>
-    [SerializeField] string serverAddress = "0.0.0.0";
-
+    [SerializeField] string relayAddress = "0.0.0.0";
     [SerializeField] int upstreamPort = 9592;
     [SerializeField] string multicastAddress = "239.0.2.4";
     [SerializeField] int downstreamPort = 9591;
@@ -34,7 +30,8 @@ namespace Holojam.Network {
     /// <summary>
     /// Address of the central Holojam relay node.
     /// </summary>
-    public string ServerAddress { get { return serverAddress; } }
+    public string RelayAddress { get { return relayAddress; } }
+
     public int UpstreamPort { get { return upstreamPort; } }
     public string MulticastAddress { get { return multicastAddress; } }
     public int DownstreamPort { get { return downstreamPort; } }
@@ -110,42 +107,46 @@ namespace Holojam.Network {
     }
 
     /// <summary>
-    /// Setter for changing the IP address of the Holojam relay node you're connecting to while running the program.
-    /// This takes care of reconnecting to the server with the updated address.
+    /// Changes the IP address used to send data upstream to the Holojam relay node.
+    /// Automatically reconnects to the relay with the updated address.
     /// </summary>
-    /// <param name="address">The IP address of the server you want to connect to. Must be a valid IP address.</param>
-    public void ChangeServerAddress(string address) {
-      Stop();
-      serverAddress = address;
-      Start();
+    /// <param name="address">
+    /// The IP address of the relay you want to connect to. Must be a valid IP address.
+    /// </param>
+    public void ChangeRelayAddress(string address) {
+      relayAddress = address;
+      Restart();
     }
 
     /// <summary>
-    /// Setter for changing the IP address and ports for both upstream and downstream communication at once.
-    /// This takes care of reconnecting to the server with the updated addresses and ports.
+    /// Changes the various client settings, and automatically restarts the client with the
+    /// updated addresses and ports.
     /// </summary>
-    /// <param name="serverAddress"></param>
+    /// <param name="relayAddress"></param>
     /// <param name="upstreamPort"></param>
     /// <param name="multicastAddress"></param>
     /// <param name="downstreamPort"></param>
-    public void ChangeServerSettings(string serverAddress, int upstreamPort,
-                                     string multicastAddress, int downstreamPort)
-    {
-      Stop();
-      this.serverAddress = serverAddress;
+    public void ChangeClientSettings(
+      string relayAddress, int upstreamPort,
+      string multicastAddress, int downstreamPort
+    ){
+      this.relayAddress = relayAddress;
       this.upstreamPort = upstreamPort;
       this.multicastAddress = multicastAddress;
       this.downstreamPort = downstreamPort;
-      Start();
+      Restart();
     }
 
     /// <summary>
-    /// Starts the threads for sending and receiving data, at the address and ports that this object has been
-    /// configured with.
+    /// Starts the threads for sending and receiving data, using the server settings configured
+    /// in the inspector.
     /// </summary>
-    internal void Start() {
-      emitter = new Emitter(serverAddress, upstreamPort);
+    internal void Restart() {
+      Stop(); // Make sure nothing is running
+
+      emitter = new Emitter(relayAddress, upstreamPort);
       sink = new Sink(multicastAddress, downstreamPort);
+
       // Start threads
       sink.Start();
       emitter.Start();
@@ -163,11 +164,11 @@ namespace Holojam.Network {
       staged = new List<Controller>();
       untracked = new List<Controller>();
 
-      Start();
+      Restart();
     }
 
     /// <summary>
-    /// Publishes events and triggers emission thread.
+    /// Publishes events, triggers emission thread.
     /// </summary>
     void Update() {
       // Process events as soon as possible

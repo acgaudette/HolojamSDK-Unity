@@ -1,5 +1,5 @@
-﻿//ClientEditor.cs
-//Created by Aaron C Gaudette on 11.11.16
+﻿// ClientEditor.cs
+// Created by Holojam Inc. on 11.11.16
 
 using UnityEngine;
 using UnityEditor;
@@ -8,23 +8,23 @@ using Holojam.Network;
 namespace Holojam.Network {
   [CustomEditor(typeof(Client))]
   public class ClientEditor : Editor {
-    SerializedProperty serverAddress, upstreamPort, multicastAddress, downstreamPort;
+    SerializedProperty relayAddress, upstreamPort, multicastAddress, downstreamPort;
     SerializedProperty sendScope, rate;
 
-    string newServerAddress = "?";
+    string newRelayAddress = "?";
     int newUpstreamPort = -1;
     string newMulticastAddress = "?";
     int newDownstreamPort = -1;
 
     void OnEnable() {
-      serverAddress = serializedObject.FindProperty("serverAddress");
+      relayAddress = serializedObject.FindProperty("relayAddress");
       upstreamPort = serializedObject.FindProperty("upstreamPort");
       multicastAddress = serializedObject.FindProperty("multicastAddress");
       downstreamPort = serializedObject.FindProperty("downstreamPort");
       sendScope = serializedObject.FindProperty("sendScope");
       rate = serializedObject.FindProperty("rate");
 
-      newServerAddress = serverAddress.stringValue;
+      newRelayAddress = relayAddress.stringValue;
       newUpstreamPort = upstreamPort.intValue;
       newMulticastAddress = multicastAddress.stringValue;
       newDownstreamPort = downstreamPort.intValue;
@@ -36,20 +36,21 @@ namespace Holojam.Network {
       Client client = (Client)serializedObject.targetObject;
 
       if (Application.isPlaying) {
-        // If we're in run mode, we need to go through the API to change the server address so that we restart the
-        // sending and receiving threads and so on.
-        newServerAddress = EditorGUILayout.TextField("Server Address", newServerAddress);
+        // If we're in run mode, we need to go through the API to change the server address so that
+        // we restart the sending and receiving threads and so on.
+        newRelayAddress = EditorGUILayout.TextField("Relay Address", newRelayAddress);
       }
       else {
         // Otherwise, we can just change the serialized property directly.
-        EditorGUILayout.PropertyField(serverAddress);
+        EditorGUILayout.PropertyField(relayAddress);
       }
       EditorGUILayout.PropertyField(sendScope);
 
-      // "Apply changes" button should only be shown if we changed the IP of the server while in run mode
-      if (newServerAddress != serverAddress.stringValue && Application.isPlaying) {
+      // "Apply changes" button should only be shown if we changed the IP of the server
+      // while in run mode
+      if (newRelayAddress != relayAddress.stringValue && Application.isPlaying) {
         if (GUILayout.Button("Apply changes")) {
-          client.ChangeServerAddress(newServerAddress);
+          client.ChangeRelayAddress(newRelayAddress);
         }
       }
 
@@ -94,8 +95,8 @@ namespace Holojam.Network {
       client.advanced = EditorGUILayout.Foldout(client.advanced, "Advanced");
       if(client.advanced) {
         if (Application.isPlaying) {
-          // If we're in run mode, we need to go through the API to change these properties so that we restart the
-          // sending and receiving threads and so on.
+          // If we're in run mode, we need to go through the API to change these properties so that we
+          // restart the sending and receiving threads and so on.
           newUpstreamPort = EditorGUILayout.IntField("Upstream Port", newUpstreamPort);
           newMulticastAddress = EditorGUILayout.TextField("Multicast Address", newMulticastAddress);
           newDownstreamPort = EditorGUILayout.IntField("Downstream Port", newDownstreamPort);
@@ -114,7 +115,9 @@ namespace Holojam.Network {
                                       || newDownstreamPort != downstreamPort.intValue))
         {
           if (GUILayout.Button("Apply changes")) {
-            client.ChangeServerSettings(client.ServerAddress, newUpstreamPort, newMulticastAddress, newDownstreamPort);
+            client.ChangeClientSettings(
+              client.RelayAddress, newUpstreamPort, newMulticastAddress, newDownstreamPort
+            );
           }
         }
       }
