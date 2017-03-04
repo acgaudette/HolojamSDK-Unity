@@ -33,7 +33,8 @@ namespace Holojam.Tools {
         case "RelayIP":
           Client client = GetComponent<Client>();
           if (client == null) {
-            // TODO: error
+            Debug.LogWarning("Error: Holojam ConfigFileReader should be added to the same GameObject "
+                             + " as the Holojam Client.");
             break;
           }
           string ip = GetText(node);
