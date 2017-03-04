@@ -11,14 +11,14 @@ namespace Holojam.Network {
     SerializedProperty serverAddress, upstreamPort, multicastAddress, downstreamPort;
     SerializedProperty sendScope, rate;
 
-    void OnEnable(){
+    void OnEnable() {
       serverAddress = serializedObject.FindProperty("serverAddress");
       upstreamPort = serializedObject.FindProperty("upstreamPort");
       multicastAddress = serializedObject.FindProperty("multicastAddress");
       downstreamPort = serializedObject.FindProperty("downstreamPort");
       sendScope = serializedObject.FindProperty("sendScope");
       rate = serializedObject.FindProperty("rate");
-      }
+    }
 
     public override void OnInspectorGUI() {
       serializedObject.Update();
