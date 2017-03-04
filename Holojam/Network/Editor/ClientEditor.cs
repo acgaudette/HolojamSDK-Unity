@@ -40,10 +40,9 @@ namespace Holojam.Network {
       }
       EditorGUILayout.PropertyField(sendScope);
 
-      // "Connect to new server address" button should only be shown if we changed the IP of the server while
-      // in run mode
+      // "Apply changes" button should only be shown if we changed the IP of the server while in run mode
       if (newServerAddress != serverAddress.stringValue && Application.isPlaying) {
-        if (GUILayout.Button("Connect to new server address")) {
+        if (GUILayout.Button("Apply changes")) {
           client.ChangeServerAddress(newServerAddress);
         }
       }
