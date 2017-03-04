@@ -32,6 +32,14 @@ namespace Holojam.Network {
     [SerializeField] int downstreamPort = 9591;
 
     /// <summary>
+    /// Address of the central Holojam relay node.
+    /// </summary>
+    public string ServerAddress { get { return serverAddress; } }
+    public int UpstreamPort { get { return upstreamPort; } }
+    public string MulticastAddress { get { return multicastAddress; } }
+    public int DownstreamPort { get { return downstreamPort; } }
+
+    /// <summary>
     /// Global namespace for outgoing updates and events.
     /// </summary>
     public string sendScope = "Unity";
@@ -102,13 +110,32 @@ namespace Holojam.Network {
     }
 
     /// <summary>
-    /// Use this to change the IP address of the Holojam relay node you're connecting to while running the program.
+    /// Setter for changing the IP address of the Holojam relay node you're connecting to while running the program.
     /// This takes care of reconnecting to the server with the updated address.
     /// </summary>
     /// <param name="address">The IP address of the server you want to connect to. Must be a valid IP address.</param>
     public void ChangeServerAddress(string address) {
       Stop();
       serverAddress = address;
+      Start();
+    }
+
+    /// <summary>
+    /// Setter for changing the IP address and ports for both upstream and downstream communication at once.
+    /// This takes care of reconnecting to the server with the updated addresses and ports.
+    /// </summary>
+    /// <param name="serverAddress"></param>
+    /// <param name="upstreamPort"></param>
+    /// <param name="multicastAddress"></param>
+    /// <param name="downstreamPort"></param>
+    public void ChangeServerSettings(string serverAddress, int upstreamPort,
+                                     string multicastAddress, int downstreamPort)
+    {
+      Stop();
+      this.serverAddress = serverAddress;
+      this.upstreamPort = upstreamPort;
+      this.multicastAddress = multicastAddress;
+      this.downstreamPort = downstreamPort;
       Start();
     }
 

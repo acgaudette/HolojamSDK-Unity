@@ -12,6 +12,9 @@ namespace Holojam.Network {
     SerializedProperty sendScope, rate;
 
     string newServerAddress = "?";
+    int newUpstreamPort = -1;
+    string newMulticastAddress = "?";
+    int newDownstreamPort = -1;
 
     void OnEnable() {
       serverAddress = serializedObject.FindProperty("serverAddress");
@@ -22,6 +25,9 @@ namespace Holojam.Network {
       rate = serializedObject.FindProperty("rate");
 
       newServerAddress = serverAddress.stringValue;
+      newUpstreamPort = upstreamPort.intValue;
+      newMulticastAddress = multicastAddress.stringValue;
+      newDownstreamPort = downstreamPort.intValue;
     }
 
     public override void OnInspectorGUI() {
@@ -87,10 +93,30 @@ namespace Holojam.Network {
       EditorGUIUtility.labelWidth = 0;
       client.advanced = EditorGUILayout.Foldout(client.advanced, "Advanced");
       if(client.advanced) {
-        EditorGUILayout.PropertyField(upstreamPort);
-        EditorGUILayout.PropertyField(multicastAddress);
-        EditorGUILayout.PropertyField(downstreamPort);
+        if (Application.isPlaying) {
+          // If we're in run mode, we need to go through the API to change these properties so that we restart the
+          // sending and receiving threads and so on.
+          newUpstreamPort = EditorGUILayout.IntField("Upstream Port", newUpstreamPort);
+          newMulticastAddress = EditorGUILayout.TextField("Multicast Address", newMulticastAddress);
+          newDownstreamPort = EditorGUILayout.IntField("Downstream Port", newDownstreamPort);
+        }
+        else {
+          // Otherwise, we can just change the serialized property directly.
+          EditorGUILayout.PropertyField(upstreamPort);
+          EditorGUILayout.PropertyField(multicastAddress);
+          EditorGUILayout.PropertyField(downstreamPort);
+        }
         EditorGUILayout.PropertyField(rate);
+
+        // "Apply changes" button should only be shown if we changed these settings while in run mode
+        if (Application.isPlaying && (newUpstreamPort != upstreamPort.intValue
+                                      || newMulticastAddress != multicastAddress.stringValue
+                                      || newDownstreamPort != downstreamPort.intValue))
+        {
+          if (GUILayout.Button("Apply changes")) {
+            client.ChangeServerSettings(client.ServerAddress, newUpstreamPort, newMulticastAddress, newDownstreamPort);
+          }
+        }
       }
 
       serializedObject.ApplyModifiedProperties();
