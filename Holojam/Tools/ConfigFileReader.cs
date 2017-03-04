@@ -12,7 +12,7 @@ namespace Holojam.Tools {
 
     void Awake() {
       LoadConfiguration();
-  }
+    }
 
     void LoadConfiguration() {
       XmlDocument configFile = new XmlDocument();
@@ -41,7 +41,12 @@ namespace Holojam.Tools {
           client.ChangeRelayAddress(ip);
           break;
         case "BuildIndex":
-          // TODO
+          int buildIndex = -1;
+          if (!int.TryParse(GetText(node), out buildIndex)) {
+            // TODO: error
+            break;
+          }
+          BuildManager.BUILD_INDEX = buildIndex;
           break;
         default:
           Debug.LogWarning("Unknown option \"" + node.Name
@@ -49,7 +54,7 @@ namespace Holojam.Tools {
           break;
         }
       }
-  }
+    }
 
     string GetText(XmlNode node) {
       foreach (XmlNode child in node.ChildNodes) {
@@ -58,6 +63,6 @@ namespace Holojam.Tools {
         }
       }
       return null;
-  }
+    }
   }
 };
