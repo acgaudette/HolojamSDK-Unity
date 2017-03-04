@@ -25,11 +25,11 @@ namespace Holojam.Network {
     /// <summary>
     /// Address of the central Holojam relay node.
     /// </summary>
-    public string serverAddress = "0.0.0.0";
+    [SerializeField] string serverAddress = "0.0.0.0";
 
-    public int upstreamPort = 9592;
-    public string multicastAddress = "239.0.2.4";
-    public int downstreamPort = 9591;
+    [SerializeField] int upstreamPort = 9592;
+    [SerializeField] string multicastAddress = "239.0.2.4";
+    [SerializeField] int downstreamPort = 9591;
 
     /// <summary>
     /// Global namespace for outgoing updates and events.
@@ -101,16 +101,42 @@ namespace Holojam.Network {
       global.emitter.SendEvent(label, flake);
     }
 
+    /// <summary>
+    /// Use this to change the IP address of the Holojam relay node you're connecting to while running the program.
+    /// This takes care of reconnecting to the server with the updated address.
+    /// </summary>
+    /// <param name="address">The IP address of the server you want to connect to. Must be a valid IP address.</param>
+    public void ChangeServerAddress(string address) {
+      Stop();
+      serverAddress = address;
+      Start();
+    }
+
+    /// <summary>
+    /// Starts the threads for sending and receiving data, at the address and ports that this object has been
+    /// configured with.
+    /// </summary>
+    internal void Start() {
+      emitter = new Emitter(serverAddress, upstreamPort);
+      sink = new Sink(multicastAddress, downstreamPort);
+      // Start threads
+      sink.Start();
+      emitter.Start();
+    }
+
+    /// <summary>
+    /// Stops the threads for sending and receiving data.
+    /// </summary>
+    internal void Stop() {
+      if (sink != null) { sink.Stop(); }
+      if (emitter != null) { emitter.Stop(); }
+    }
+
     void Awake() {
       staged = new List<Controller>();
       untracked = new List<Controller>();
 
-      emitter = new Emitter(serverAddress, upstreamPort);
-      sink = new Sink(multicastAddress, downstreamPort);
-
-      // Start threads
-      sink.Start();
-      emitter.Start();
+      Start();
     }
 
     /// <summary>
@@ -183,8 +209,7 @@ namespace Holojam.Network {
     #endif
 
     void OnDestroy() {
-      sink.Stop();
-      emitter.Stop();
+      Stop();
     }
 
     // Editor
