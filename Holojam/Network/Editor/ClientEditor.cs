@@ -11,6 +11,8 @@ namespace Holojam.Network {
     SerializedProperty serverAddress, upstreamPort, multicastAddress, downstreamPort;
     SerializedProperty sendScope, rate;
 
+    string newServerAddress = "?";
+
     void OnEnable() {
       serverAddress = serializedObject.FindProperty("serverAddress");
       upstreamPort = serializedObject.FindProperty("upstreamPort");
@@ -18,13 +20,33 @@ namespace Holojam.Network {
       downstreamPort = serializedObject.FindProperty("downstreamPort");
       sendScope = serializedObject.FindProperty("sendScope");
       rate = serializedObject.FindProperty("rate");
+
+      newServerAddress = serverAddress.stringValue;
     }
 
     public override void OnInspectorGUI() {
       serializedObject.Update();
 
-      EditorGUILayout.PropertyField(serverAddress);
+      Client client = (Client)serializedObject.targetObject;
+
+      if (Application.isPlaying) {
+        // If we're in run mode, we need to go through the API to change the server address so that we restart the
+        // sending and receiving threads and so on.
+        newServerAddress = EditorGUILayout.TextField("Server Address", newServerAddress);
+      }
+      else {
+        // Otherwise, we can just change the serialized property directly.
+        EditorGUILayout.PropertyField(serverAddress);
+      }
       EditorGUILayout.PropertyField(sendScope);
+
+      // "Connect to new server address" button should only be shown if we changed the IP of the server while
+      // in run mode
+      if (newServerAddress != serverAddress.stringValue && Application.isPlaying) {
+        if (GUILayout.Button("Connect to new server address")) {
+          client.ChangeServerAddress(newServerAddress);
+        }
+      }
 
       EditorGUIUtility.labelWidth = 64;
       GUIStyle bold = new GUIStyle(EditorStyles.boldLabel);
@@ -32,8 +54,6 @@ namespace Holojam.Network {
 
       EditorGUILayout.Space();
       EditorGUILayout.LabelField("Packets per Second", bold);
-
-      Client client = (Client)serializedObject.targetObject;
       if(Application.isPlaying)
         style.normal.textColor = client.sentPPS > 0 ?
                new Color(0.5f, 1, 0.5f) : new Color(1, 0.5f, 0.5f);
