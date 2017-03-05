@@ -36,6 +36,9 @@ namespace Holojam.Network {
     public string MulticastAddress { get { return multicastAddress; } }
     public int DownstreamPort { get { return downstreamPort; } }
 
+    /// <summary>
+    /// Are there threads running?
+    /// </summary>
     bool Running { get { return sink.Running || emitter.Running; } }
 
     /// <summary>
