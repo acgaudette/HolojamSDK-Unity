@@ -1,6 +1,6 @@
 <HolojamConfig>
 
-  <!-- This is a sample config file for use with the ConfigFileReader component. -->
+  <!-- This is a sample config file for use with the Configuration component. -->
   <!-- You can specify or omit any or all of these options. -->
 
   <!-- IP address of the main Holojam relay. -->

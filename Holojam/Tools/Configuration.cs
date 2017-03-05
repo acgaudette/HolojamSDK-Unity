@@ -15,7 +15,7 @@ namespace Holojam.Tools {
   /// Add this to the main Holojam object, where the Client component is, to enable config file reading.
   /// See Holojam/SampleConfig.xml for an example of the config file format.
   /// </summary>
-  public class ConfigFileReader : MonoBehaviour {
+  public class Configuration : MonoBehaviour {
 
     /// <summary>
     /// This should point to the location of the config file. Relative paths are relative to the
