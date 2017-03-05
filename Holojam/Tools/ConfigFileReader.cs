@@ -12,6 +12,7 @@ namespace Holojam.Tools {
   /// <summary>
   /// This component allows certain settings to be set via an XML config file. The location of this
   /// file is customizable, but by default is in the same directory as the executable.
+  /// Add this to the main Holojam object, where the Client component is, to enable config file reading.
   /// See Holojam/SampleConfig.xml for an example of the config file format.
   /// </summary>
   public class ConfigFileReader : MonoBehaviour {
