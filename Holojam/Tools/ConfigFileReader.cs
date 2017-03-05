@@ -8,7 +8,17 @@ using UnityEngine;
 using Holojam.Network;
 
 namespace Holojam.Tools {
+  /// <summary>
+  /// This component allows certain settings to be set via an XML config file. The location of this file
+  /// is customizable, but by default is in the same directory as the executable.
+  /// See Tools/sampleConfig.xml for an example of the config file format.
+  /// </summary>
   public class ConfigFileReader : MonoBehaviour {
+    /// <summary>
+    /// This should point to the location of the config file. Relative paths are relative to the
+    /// directory the executable is in, or when in the Unity editor relative to the main project
+    /// directory.
+    /// </summary>
     public string configFilePath = "./config.xml";
 
     void Awake() {
