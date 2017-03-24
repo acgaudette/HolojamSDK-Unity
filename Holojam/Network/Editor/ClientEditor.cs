@@ -10,7 +10,7 @@ namespace Holojam.Network {
   [CustomEditor(typeof(Client))]
   public class ClientEditor : Editor {
 
-    SerializedProperty relayAddress, upstreamPort, multicastAddress, downstreamPort;
+    SerializedProperty relayAddress, upstreamPort, multicastAddress, downstreamPort, verboseLogs;
     SerializedProperty sendScope, rate;
 
     string newRelayAddress = "?";
@@ -25,6 +25,7 @@ namespace Holojam.Network {
       downstreamPort = serializedObject.FindProperty("downstreamPort");
       sendScope = serializedObject.FindProperty("sendScope");
       rate = serializedObject.FindProperty("rate");
+      verboseLogs = serializedObject.FindProperty("verboseLogs");
 
       newRelayAddress = relayAddress.stringValue;
       newUpstreamPort = upstreamPort.intValue;
@@ -110,6 +111,7 @@ namespace Holojam.Network {
           EditorGUILayout.PropertyField(downstreamPort);
         }
         EditorGUILayout.PropertyField(rate);
+        EditorGUILayout.PropertyField(verboseLogs);
 
         // "Apply changes" button should only be shown if we changed these settings while in run mode
         if (Application.isPlaying && (newUpstreamPort != upstreamPort.intValue
