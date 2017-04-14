@@ -32,16 +32,19 @@ namespace Holojam.Tools {
       XmlDocument configFile = new XmlDocument();
       try {
         configFile.Load(configFilePath);
+        RemoteLogger.Log(
+          "Holojam.Tools.ConfigFileReader: Holojam configuration file found and loaded."
+        );
       }
       catch (FileNotFoundException) {
-        Debug.LogWarning(
+        RemoteLogger.Log(
           "Holojam.Tools.ConfigFileReader: Holojam configuration file at "
           + configFilePath + " not found."
         );
         return;
       }
       catch (XmlException ex) {
-        Debug.LogWarning(
+        RemoteLogger.Log(
           "Holojam.Tools.ConfigFileReader: Error reading Holojam configuration file: "
           + ex.Message
         );
@@ -56,7 +59,7 @@ namespace Holojam.Tools {
         case "RelayIP":
           Client client = GetComponent<Client>();
           if (client == null) {
-            Debug.LogWarning(
+            RemoteLogger.Log(
               "Holojam.Tools.ConfigFileReader: Component should be added to the same GameObject "
               + " as the Holojam Client."
             );
@@ -66,7 +69,7 @@ namespace Holojam.Tools {
           IPAddress dummy;
           if (!IPAddress.TryParse(ip, out dummy)) {
             // The IP address is invalid
-            Debug.LogWarning(
+            RemoteLogger.Log(
               "Holojam.Tools.ConfigFileReader: "
               + "Error in Holojam configuration file--relay IP should be a valid IP"
               + " address, instead got \"" + ip + "\"."
@@ -79,7 +82,7 @@ namespace Holojam.Tools {
           string buildIndexText = GetText(node);
           int buildIndex = -1;
           if (!int.TryParse(buildIndexText, out buildIndex)) {
-            Debug.LogWarning(
+            RemoteLogger.Log(
               "Holojam.Tools.ConfigFileReader: "
               + "Error in Holojam configuration file--build index should be a number,"
               + " instead got \"" + buildIndexText + "\"."
@@ -89,7 +92,7 @@ namespace Holojam.Tools {
           BuildManager.BUILD_INDEX = buildIndex;
           break;
         default:
-          Debug.LogWarning(
+          RemoteLogger.Log(
             "Holojam.Tools.ConfigFileReader: Unknown option \"" + node.Name
             + "\" found in Holojam config file at " + configFilePath
           );
