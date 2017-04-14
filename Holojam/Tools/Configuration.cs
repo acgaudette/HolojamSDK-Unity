@@ -33,19 +33,19 @@ namespace Holojam.Tools {
       try {
         configFile.Load(configFilePath);
         RemoteLogger.Log(
-          "Holojam.Tools.ConfigFileReader: Holojam configuration file found and loaded."
+          "Holojam.Tools.Configuration: Holojam configuration file found and loaded."
         );
       }
       catch (FileNotFoundException) {
         RemoteLogger.Log(
-          "Holojam.Tools.ConfigFileReader: Holojam configuration file at "
+          "Holojam.Tools.Configuration: Holojam configuration file at "
           + configFilePath + " not found."
         );
         return;
       }
       catch (XmlException ex) {
         RemoteLogger.Log(
-          "Holojam.Tools.ConfigFileReader: Error reading Holojam configuration file: "
+          "Holojam.Tools.Configuration: Error reading Holojam configuration file: "
           + ex.Message
         );
         return;
@@ -60,7 +60,7 @@ namespace Holojam.Tools {
           Client client = GetComponent<Client>();
           if (client == null) {
             RemoteLogger.Log(
-              "Holojam.Tools.ConfigFileReader: Component should be added to the same GameObject "
+              "Holojam.Tools.Configuration: Component should be added to the same GameObject "
               + " as the Holojam Client."
             );
             break;
@@ -70,7 +70,7 @@ namespace Holojam.Tools {
           if (!IPAddress.TryParse(ip, out dummy)) {
             // The IP address is invalid
             RemoteLogger.Log(
-              "Holojam.Tools.ConfigFileReader: "
+              "Holojam.Tools.Configuration: "
               + "Error in Holojam configuration file--relay IP should be a valid IP"
               + " address, instead got \"" + ip + "\"."
             );
@@ -83,7 +83,7 @@ namespace Holojam.Tools {
           int buildIndex = -1;
           if (!int.TryParse(buildIndexText, out buildIndex)) {
             RemoteLogger.Log(
-              "Holojam.Tools.ConfigFileReader: "
+              "Holojam.Tools.Configuration: "
               + "Error in Holojam configuration file--build index should be a number,"
               + " instead got \"" + buildIndexText + "\"."
             );
@@ -93,7 +93,7 @@ namespace Holojam.Tools {
           break;
         default:
           RemoteLogger.Log(
-            "Holojam.Tools.ConfigFileReader: Unknown option \"" + node.Name
+            "Holojam.Tools.Configuration: Unknown option \"" + node.Name
             + "\" found in Holojam config file at " + configFilePath
           );
           break;
