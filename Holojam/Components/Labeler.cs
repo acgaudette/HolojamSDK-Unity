@@ -14,40 +14,49 @@ namespace Holojam.Components {
     public class LabelerInstance {
 
       private readonly IDictionary<string, int> collisionMap;
+      private readonly IDictionary<int, string> idMap;
 
       internal LabelerInstance() {
         collisionMap = new Dictionary<string, int>();
+        idMap = new Dictionary<int, string>();
       }
 
       /// <summary>
       /// Given a GameObject, generate and return a unique label
       /// </summary>
-      public string GenerateLabel(GameObject g) {
-        int count = 0;
+      public string GetLabel(Holojam.Network.Controller obj) {
+        int id = obj.GetInstanceID();
+        string label;
+        if (idMap.TryGetValue(id, out label)) {
+          return label;
+        }
 
+        string gName = obj.gameObject.name;
+        int count = 0;
         // If the key exists, increase the count before updating the dictionary
-        if (collisionMap.TryGetValue(g.name, out count)) {
+        if (collisionMap.TryGetValue(gName, out count)) {
           count++;
         }
 
-        collisionMap[g.name] = count;
+        collisionMap[gName] = count;
 
-        // Concatenate the name with count
-        return g.name + ':' + count;
+        // label is concatenation of the name with count
+        return idMap[id] = gName + ':' + count;
       }
     }
     
     private static LabelerInstance instance;
-    
+
     // <summary>
     // wrapper for internal instance method, GenerateLabel,
     // returns a new label upon request
     // </summary>
-    public static string GenerateLabel(GameObject g) {
+    public static string GetLabel(Holojam.Network.Controller obj) {
       if (instance == null) {
         instance = new LabelerInstance();
       }
-      return instance.GenerateLabel(g);
+      return instance.GetLabel(obj);
     }
   }
+
 }
